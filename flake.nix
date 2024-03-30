@@ -24,7 +24,7 @@
     ...
   } @ inputs: let
     inherit (self) outputs;
-    # Supported systems for your flake packages, shell, etc.
+    lib = nixpkgs.lib // home-manager.lib;
     systems = [
       "aarch64-linux"
       "i686-linux"
@@ -32,33 +32,34 @@
       "aarch64-darwin"
       "x86_64-darwin"
     ];
-
-    forAllSystems = nixpkgs.lib.genAttrs systems;
+    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+    pkgsFor = lib.genAttrs systems (system: import nixpkgs {
+      inherit system;
+      config.allowUnfree = true;
+    });
   in {
-    packages = forAllSystems (system: import ./pkgs nixpkgs.legacyPackages.${system});
-    overlays = import ./overlays {inherit inputs;};
-
-    formatter = forAllSystems (system: nixpkgs.legacyPackages.${system}.alejandra);
+    inherit lib;
 
     nixosModules = import ./modules/nixos;
     homeManagerModules = import ./modules/home-manager;
 
-    # NixOS configuration entrypoint
-    # Available through 'nixos-rebuild --flake .#your-hostname'
+    overlays = import ./overlays {inherit inputs outputs; };
+
+    packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
+    formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
+
     nixosConfigurations = {
-      athena = nixpkgs.lib.nixosSystem {
-        specialArgs = {inherit inputs outputs;};
-        modules = [./nixos/configuration.nix];
+      athena = lib.nixosSystem {
+        modules = [ ./hosts/athena ];
+        specialArgs = { inherit inputs outputs; };
       };
     };
 
-    # Standalone home-manager configuration entrypoint
-    # Available through 'home-manager --flake .#your-username@your-hostname'
     homeConfigurations = {
-      "akos@athena" = home-manager.lib.homeManagerConfiguration {
-        pkgs = nixpkgs.legacyPackages.x86_64-linux; # Home-manager requires 'pkgs' instance
-        extraSpecialArgs = {inherit inputs outputs;};
-        modules = [./home-manager/home.nix];
+      "akos@athena" = lib.homeManagerConfiguration {
+        modules = [ ./home/akos/athena.nix ];
+        pkgs = pkgsFor.x86_64-linux;
+        extraSpecialArgs = { inherit inputs outputs; };
       };
     };
   };
