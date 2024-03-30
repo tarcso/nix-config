@@ -76,7 +76,6 @@
 
   i18n.defaultLocale = "en_US.UTF-8";
 
-  # TODO: Configure your system-wide user settings (groups, etc), add more users as needed.
   users.users.akos = {
     isNormalUser = true;
     extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
@@ -102,6 +101,12 @@
     enable = true;
     enableSSHSupport = true;
   };
+
+  environment.systemPackages = with pkgs; [
+    neovim
+    wget
+    git
+  ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
   system.stateVersion = "23.11";
