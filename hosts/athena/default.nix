@@ -6,39 +6,24 @@
   pkgs,
   ...
 }: {
-  # You can import other NixOS modules here
   imports = [
-    # If you want to use modules from other flakes (such as nixos-hardware):
-    # inputs.hardware.nixosModules.common-cpu-amd
-    # inputs.hardware.nixosModules.common-ssd
+    inputs.hardware.nixosModules.common-cpu-intel
+    inputs.hardware.nixosModules.common-gpu-intel
+    inputs.hardware.nixosModules.common-pc-ssd
 
-    # You can also split up your configuration and import pieces of it here:
-    # ./users.nix
-
-    # Import your generated (nixos-generate-config) hardware configuration
     ./hardware-configuration.nix
+
+    ../common/optional/gnome.nix
   ];
 
   nixpkgs = {
-    # You can add overlays here
     overlays = [
       outputs.overlays.additions
       outputs.overlays.modifications
       outputs.overlays.unstable-packages
 
-      # If you want to use overlays exported from other flakes:
-      # neovim-nightly-overlay.overlays.default
-
-      # Or define it inline, for example:
-      # (final: prev: {
-      #   hi = final.hello.overrideAttrs (oldAttrs: {
-      #     patches = [ ./change-hello-to-hi.patch ];
-      #   });
-      # })
     ];
-    # Configure your nixpkgs instance
     config = {
-      # Disable if you don't want unfree packages
       allowUnfree = true;
     };
   };
@@ -59,19 +44,13 @@
     config.nix.registry;
 
   nix.settings = {
-    # Enable flakes and new 'nix' command
     experimental-features = "nix-command flakes";
-    # Deduplicate and optimize nix store
     auto-optimise-store = true;
   };
 
-  # FIXME: Add the rest of your current configuration
-
-  # TODO: Set your hostname
   networking.hostName = "athena";
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
-  # TODO: This is just an example, be sure to use whatever bootloader you prefer
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
 
@@ -81,23 +60,33 @@
 
   users.users.akos = {
     isNormalUser = true;
-    extraGroups = ["wheel"]; # Enable ‘sudo’ for the user.
+    extraGroups = ["wheel"];
     packages = with pkgs; [
       firefox
     ];
     initialPassword = "password";
   };
 
-  # This setups a SSH server. Very important if you're setting up a headless system.
-  # Feel free to remove if you don't need it.
+  services.logind = {
+    lidSwitch = "suspend";
+    lidSwitchExternalPower = "suspend";
+  };
+
   services.openssh = {
     enable = true;
     settings = {
-      # Forbid root login through SSH.
       PermitRootLogin = "no";
-      # Use keys only. Remove if you want to SSH using password (not recommended)
       PasswordAuthentication = false;
     };
+  };
+
+  hardware.opengl.enable = true;
+
+  powerManagement.powertop.enable = true;
+
+  services.xserver.libinput = {
+    enable = true;
+    touchpad.tapping = true;
   };
 
   programs.gnupg.agent = {
@@ -109,6 +98,7 @@
     neovim
     wget
     git
+    neofetch
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
