@@ -10,50 +10,52 @@
     hardware.url = "github:nixos/nixos-hardware";
   };
 
-  outputs = {
-    self,
-    nixpkgs,
-    home-manager,
-    ...
-  } @ inputs: let
-    inherit (self) outputs;
-    lib = nixpkgs.lib // home-manager.lib;
-    systems = [
-      "aarch64-linux"
-      "i686-linux"
-      "x86_64-linux"
-      "aarch64-darwin"
-      "x86_64-darwin"
-    ];
-    forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
-    pkgsFor = lib.genAttrs systems (system: import nixpkgs {
-      inherit system;
-      config.allowUnfree = true;
-    });
-  in {
-    inherit lib;
+  outputs =
+    { self
+    , nixpkgs
+    , home-manager
+    , ...
+    } @ inputs:
+    let
+      inherit (self) outputs;
+      lib = nixpkgs.lib // home-manager.lib;
+      systems = [
+        "aarch64-linux"
+        "i686-linux"
+        "x86_64-linux"
+        "aarch64-darwin"
+        "x86_64-darwin"
+      ];
+      forEachSystem = f: lib.genAttrs systems (system: f pkgsFor.${system});
+      pkgsFor = lib.genAttrs systems (system: import nixpkgs {
+        inherit system;
+        config.allowUnfree = true;
+      });
+    in
+    {
+      inherit lib;
 
-    nixosModules = import ./modules/nixos;
-    homeManagerModules = import ./modules/home-manager;
+      nixosModules = import ./modules/nixos;
+      homeManagerModules = import ./modules/home-manager;
 
-    overlays = import ./overlays {inherit inputs outputs; };
+      overlays = import ./overlays { inherit inputs outputs; };
 
-    packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
-    formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
+      packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
+      formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
-    nixosConfigurations = {
-      athena = lib.nixosSystem {
-        modules = [ ./hosts/athena ];
-        specialArgs = { inherit inputs outputs; };
+      nixosConfigurations = {
+        athena = lib.nixosSystem {
+          modules = [ ./hosts/athena ];
+          specialArgs = { inherit inputs outputs; };
+        };
+      };
+
+      homeConfigurations = {
+        "akos@athena" = lib.homeManagerConfiguration {
+          modules = [ ./home/akos/athena.nix ];
+          pkgs = pkgsFor.x86_64-linux;
+          extraSpecialArgs = { inherit inputs outputs; };
+        };
       };
     };
-
-    homeConfigurations = {
-      "akos@athena" = lib.homeManagerConfiguration {
-        modules = [ ./home/akos/athena.nix ];
-        pkgs = pkgsFor.x86_64-linux;
-        extraSpecialArgs = { inherit inputs outputs; };
-      };
-    };
-  };
 }
