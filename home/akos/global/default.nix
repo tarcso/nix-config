@@ -1,6 +1,7 @@
 { inputs, outputs, pkgs, lib, config, ... }:
 {
   imports = [
+    ../features/shell
     ../features/nvim
   ] ++ (builtins.attrValues outputs.homeManagerModules);
 
