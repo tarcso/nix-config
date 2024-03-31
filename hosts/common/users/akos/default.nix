@@ -3,8 +3,7 @@ let
   ifGroupExists = groups: builtins.filter (group: builtins.hasAttr group config.users.groups) groups;
 in
 {
-  # TODO: use nix-sops for secret management and disable user mutability
-  users.mutableUsers = true;
+  users.mutableUsers = false;
   users.users.akos = {
     isNormalUser = true;
     shell = pkgs.zsh;
@@ -17,6 +16,13 @@ in
       "wireshark"
       "docker"
     ];
+    hashedPasswordFile = config.sops.secrets.akos-password.path;
+    packages = [ pkgs.home-manager ];
+  };
+
+  sops.secrets.akos-password = {
+    sopsFile = ../../secrets.yaml;
+    neededForUsers = true;
   };
 
   home-manager.users.akos = import ../../../../home/akos/${config.networking.hostName}.nix;

@@ -1,0 +1,13 @@
+keys:
+  - &users:
+    - &akos DC6C238558CF0FC39400BA2EE2256EAE7390AF2C
+  - &hosts:
+    - &athena age1nmfkvqnclhdr4j4ev7yug8ehrsl8hh09tuffmks0dfl8w4dkqv5sqhf3u4
+
+creation_rules:
+  - path_regex: hosts/common/secrets.ya?ml$
+    key_groups:
+      - age:
+        - *athena
+        pgp:
+        - *akos

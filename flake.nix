@@ -49,6 +49,8 @@
       packages = forEachSystem (pkgs: import ./pkgs { inherit pkgs; });
       formatter = forEachSystem (pkgs: pkgs.nixpkgs-fmt);
 
+      devShells = forEachSystem (pkgs: import ./shell.nix { inherit pkgs; });
+
       nixosConfigurations = {
         athena = lib.nixosSystem {
           modules = [ ./hosts/athena ];
