@@ -3,11 +3,11 @@
   imports = [
     inputs.home-manager.nixosModules.home-manager
     ./locale.nix
-    ./auto-upgrade.nix
-    ./nix.nix
     ./zsh.nix
-    ./sops.nix
+    ./nix.nix
+    ./auto-upgrade.nix
     ./openssh.nix
+    ./sops.nix
   ] ++ (builtins.attrValues outputs.nixosModules);
 
   home-manager.extraSpecialArgs = {

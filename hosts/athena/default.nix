@@ -13,6 +13,7 @@
     ./hardware-configuration.nix
 
     ../common/global
+    ../common/optional/quietboot.nix
     ../common/optional/gnome.nix
 
     ../common/users/akos
