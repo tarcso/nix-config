@@ -1,11 +1,13 @@
 { config, pkgs, ... }:
 {
   imports = [
+    ./lsp.nix
+    ./ft.nix
   ];
-  home.sessionVariables.EDITOR = "nvim";
-
   programs.neovim = {
     enable = true;
+    defaultEditor = true;
+    vimAlias = true;
 
     extraConfig = ''
       	filetype plugin indent on
@@ -99,40 +101,7 @@
       telescope-nvim
       ranger-vim
       copilot-vim
-
-      nvim-lspconfig
-      {
-        plugin = nvim-cmp;
-        type = "lua";
-        config = ''
-          		local cmp = require('cmp')
-
-          		cmp.setup({
-          		    snippet = {
-          			expand = function(args)
-          			    require('snippy').expand_snippet(args.body)
-          			end,
-          		    },
-          		    sources = cmp.config.sources({
-          			{ name = 'nvim_lsp' },
-          		    }, {
-          			{ name = 'buffer' },
-          			{ name = 'snippy' },
-          		    }),
-          		    mapping = cmp.mapping.preset.insert({
-          			['<C-Space>'] = cmp.mapping.complete(),
-          			['<C-e>'] = cmp.mapping.close(),
-          			['<Tab>'] = cmp.mapping.confirm({ select = true }),
-          		    }),
-          		})
-          	'';
-      }
-      cmp-nvim-lsp
-      neodev-nvim
-
-      nvim-snippy
-      cmp-snippy
-      vim-snippets
+      editorconfig-nvim
     ];
   };
 
