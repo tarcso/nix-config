@@ -16,7 +16,7 @@
     ../common/optional/quietboot.nix
     ../common/optional/gnome.nix
 
-    ../common/users/landskrona.nix
+    ../common/users/landskrona
   ];
 
   networking.hostName = "karcsi";
