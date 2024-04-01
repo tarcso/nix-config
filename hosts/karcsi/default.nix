@@ -47,6 +47,9 @@
     touchpad.tapping = true;
   };
 
+  services.xserver.autoRepeatInterval = 150;
+  services.xserver.autoRepeatDelay = 150;
+
   programs.gnupg.agent = {
     enable = true;
     enableSSHSupport = true;
