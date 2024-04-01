@@ -14,6 +14,7 @@
   };
 
   services.avahi.enable = false;
+  services.dbus.packages = [ pkgs.gcr ];
 
   environment.gnome.excludePackages = (with pkgs; [
     gnome-photos

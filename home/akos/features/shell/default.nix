@@ -3,6 +3,7 @@
   imports = [
     ./ranger.nix
     ./tmux.nix
+    ./gpg.nix
   ];
 
   home.packages = with pkgs; [
