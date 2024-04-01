@@ -16,10 +16,10 @@
     ../common/optional/quietboot.nix
     ../common/optional/gnome.nix
 
-    ../common/users/akos
+    ../common/users/landskrona.nix
   ];
 
-  networking.hostName = "athena";
+  networking.hostName = "karcsi";
   networking.networkmanager.enable = true; # Easiest to use and most distros use this by default.
 
   boot.loader.systemd-boot.enable = true;

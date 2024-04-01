@@ -55,15 +55,15 @@
       devShells = forEachSystem (pkgs: import ./shell.nix { inherit pkgs; });
 
       nixosConfigurations = {
-        athena = lib.nixosSystem {
-          modules = [ ./hosts/athena ];
+        karcsi = lib.nixosSystem {
+          modules = [ ./hosts/karcsi ];
           specialArgs = { inherit inputs outputs; };
         };
       };
 
       homeConfigurations = {
-        "akos@athena" = lib.homeManagerConfiguration {
-          modules = [ ./home/akos/athena.nix ];
+        "landskrona@karcsi" = lib.homeManagerConfiguration {
+          modules = [ ./home/landskrona/karcsi.nix ];
           pkgs = pkgsFor.x86_64-linux;
           extraSpecialArgs = { inherit inputs outputs; };
         };
