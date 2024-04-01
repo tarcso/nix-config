@@ -73,7 +73,7 @@
           strip_wrapping_quote_characters = { "'", '"', "`" },
           handle_leading_whitespace = false,
         })
-        otter.activate({"python", "lua", "typescript", "javascript", "bash", "dockerfile"}, true, true, )
+        otter.activate({"python", "lua", "typescript", "javascript", "bash", "dockerfile"})
       '';
     }
     rustaceanvim

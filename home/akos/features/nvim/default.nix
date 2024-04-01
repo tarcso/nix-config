@@ -1,8 +1,12 @@
-{ config, pkgs, ... }:
+{ pkgs, config, ... }:
+let
+  color = pkgs.writeText "color.vim" ( import ./theme.nix config.colorscheme );
+in
 {
   imports = [
     ./lsp.nix
     ./ft.nix
+    ./ui.nix
   ];
   programs.neovim = {
     enable = true;
@@ -28,6 +32,8 @@
       	set timeoutlen=250
 
       	hi! link @variable Normal
+
+        source ${color}
 
       	set pastetoggle=<F2>
       	 

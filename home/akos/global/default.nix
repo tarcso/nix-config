@@ -1,6 +1,9 @@
-{ inputs, outputs, pkgs, lib, config, ... }:
+{ inputs, outputs, pkgs, lib, config, ... }: let
+  inherit (inputs.nix-colors) colorSchemes;
+in
 {
   imports = [
+    inputs.nix-colors.homeManagerModule
     ../features/shell
     ../features/nvim
   ] ++ (builtins.attrValues outputs.homeManagerModules);
@@ -26,6 +29,12 @@
   programs = {
     home-manager.enable = true;
     git.enable = true;
+  };
+
+  colorscheme = lib.mkOverride 1499 colorSchemes.horizon-dark;
+  specialisation = {
+    dark.configuration.colorscheme = lib.mkOverride 1498 config.colorscheme;
+    light.configuration.colorscheme = lib.mkOverride 1498 config.colorscheme;
   };
 
   home = {
