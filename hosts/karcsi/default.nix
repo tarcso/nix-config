@@ -55,12 +55,16 @@
     enableSSHSupport = true;
   };
 
+  security.sudo.wheelNeedsPassword = false;
+
   environment.systemPackages = with pkgs; [
     neovim
     wget
     git
     neofetch
     firefox
+    jdk21
+    prettierd
   ];
 
   # https://nixos.wiki/wiki/FAQ/When_do_I_update_stateVersion
